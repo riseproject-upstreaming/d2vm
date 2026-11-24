@@ -50,6 +50,8 @@ func init() {
 		defaultArch = "x86_64"
 	case "s390x":
 		defaultArch = "s390x"
+	case "riscv64":
+		defaultArch = "riscv64"
 	}
 	switch {
 	case runtime.GOARCH == "s390x":
@@ -68,7 +70,7 @@ func init() {
 
 	// VM configuration
 	flags.StringVar(&accel, "accel", defaultAccel, "Choose acceleration mode. Use 'tcg' to disable it.")
-	flags.StringVar(&arch, "arch", defaultArch, "Type of architecture to use, e.g. x86_64, aarch64, s390x")
+	flags.StringVar(&arch, "arch", defaultArch, "Type of architecture to use, e.g. x86_64, aarch64, riscv64, s390x")
 	flags.UintVar(&cpus, "cpus", 1, "Number of CPUs")
 	flags.UintVar(&mem, "mem", 1024, "Amount of memory in MB")
 

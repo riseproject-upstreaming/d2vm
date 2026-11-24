@@ -10,7 +10,7 @@ d2vm run qemu [options] [image-path] [flags]
 
 ```
       --accel string            Choose acceleration mode. Use 'tcg' to disable it. (default "kvm:tcg")
-      --arch string             Type of architecture to use, e.g. x86_64, aarch64, s390x (default "x86_64")
+      --arch string             Type of architecture to use, e.g. x86_64, aarch64, riscv64, s390x (default "x86_64")
       --bios string             Path to the optional bios binary
       --cpus uint               Number of CPUs (default 1)
       --detached                Set qemu container to run in the background

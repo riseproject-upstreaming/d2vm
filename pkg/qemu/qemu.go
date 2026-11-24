@@ -36,6 +36,8 @@ func init() {
 		defaultArch = "x86_64"
 	case "s390x":
 		defaultArch = "s390x"
+	case "riscv64":
+		defaultArch = "riscv64"
 	}
 	switch {
 	case runtime.GOARCH == "s390x":
@@ -198,13 +200,20 @@ func (c *config) buildQemuCmdline() ([]string, error) {
 	qemuArgs = append(qemuArgs, "-uuid", c.uuid.String())
 
 	if c.bios != "" {
-		qemuArgs = append(qemuArgs, "-bios", c.bios)
+		if c.arch == "riscv64" {
+			// on riscv64, -bios is the SBI firmware slot: the UEFI firmware is loaded from pflash
+			qemuArgs = append(qemuArgs, "-drive", "if=pflash,format=raw,unit=0,readonly=on,file="+c.bios)
+		} else {
+			qemuArgs = append(qemuArgs, "-bios", c.bios)
+		}
 	}
 
 	// Need to specify the vcpu type when running qemu on arm64 platform, for security reason,
 	// the vcpu should be "host" instead of other names such as "cortex-a53"...
 	if c.arch == "aarch64" && runtime.GOARCH != "arm64" {
 		qemuArgs = append(qemuArgs, "-cpu", "cortex-a57")
+	} else if c.arch == "riscv64" && runtime.GOARCH != "riscv64" {
+		qemuArgs = append(qemuArgs, "-cpu", "rv64")
 	} else {
 		qemuArgs = append(qemuArgs, "-cpu", "host")
 	}
@@ -218,6 +227,8 @@ func (c *config) buildQemuCmdline() ([]string, error) {
 		goArch = "arm64"
 	case "x86_64":
 		goArch = "amd64"
+	case "riscv64":
+		goArch = "riscv64"
 	default:
 		return nil, fmt.Errorf("%s is an unsupported architecture.", c.arch)
 	}
@@ -241,6 +252,8 @@ func (c *config) buildQemuCmdline() ([]string, error) {
 				highmem = ""
 			}
 			qemuArgs = append(qemuArgs, "-machine", fmt.Sprintf("virt,%s%saccel=%s", gic, highmem, c.accel))
+		case "riscv64":
+			qemuArgs = append(qemuArgs, "-machine", fmt.Sprintf("virt,accel=%s", c.accel))
 		default:
 			qemuArgs = append(qemuArgs, "-machine", fmt.Sprintf("q35,accel=%s", c.accel))
 		}
@@ -248,7 +261,7 @@ func (c *config) buildQemuCmdline() ([]string, error) {
 		switch c.arch {
 		case "s390x":
 			qemuArgs = append(qemuArgs, "-machine", "s390-ccw-virtio")
-		case "aarch64":
+		case "aarch64", "riscv64":
 			qemuArgs = append(qemuArgs, "-machine", "virt")
 		default:
 			qemuArgs = append(qemuArgs, "-machine", "q35")

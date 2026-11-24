@@ -10,9 +10,10 @@ RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.
     echo "deb-src http://archive.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list
 {{- end }}
 
-RUN apt-get update && \
+RUN ARCH="$(dpkg --print-architecture)"; \
+    apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
-      linux-image-amd64 && \
+      linux-image-${ARCH} && \
       find /boot -type l -exec rm {} \;
 
 RUN ARCH="$([ "$(uname -m)" = "x86_64" ] && echo amd64 || echo arm64)"; \
@@ -31,7 +32,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt install -y grub-common grub2-common
 RUN DEBIAN_FRONTEND=noninteractive apt install -y grub-pc-bin
 {{- end }}
 {{- if .GrubEFI }}
-RUN ARCH="$([ "$(uname -m)" = "x86_64" ] && echo amd64 || echo arm64)"; \
+RUN ARCH="$(dpkg --print-architecture)"; \
     DEBIAN_FRONTEND=noninteractive apt install -y grub-efi-${ARCH}-bin
 {{- end }}
 

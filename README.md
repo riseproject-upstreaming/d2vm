@@ -110,7 +110,7 @@ Extract the tarball, then move the extracted *d2vm* binary to somewhere in your 
 ```bash
 VERSION=$(git ls-remote --tags https://github.com/linka-cloud/d2vm |cut -d'/' -f 3|tail -n 1)
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
-ARCH=$([ "$(uname -m)" = "x86_64" ] && echo "amd64" || echo "arm64")
+ARCH=$(case "$(uname -m)" in x86_64) echo "amd64";; riscv64) echo "riscv64";; *) echo "arm64";; esac)
 curl -sL "https://github.com/linka-cloud/d2vm/releases/download/${VERSION}/d2vm_${VERSION}_${OS}_${ARCH}.tar.gz" | tar -xvz d2vm
 sudo mv d2vm /usr/local/bin/
 ```
@@ -170,7 +170,7 @@ Flags:
       --add-host strings           Add a custom host-to-IP mapping (host:ip) to the /etc/hosts file in the generated image
       --boot-fs string             Filesystem to use for the boot partition, ext4 or fat32
       --boot-size uint             Size of the boot partition in MB (default 100)
-      --bootloader string          Bootloader to use: syslinux, grub, grub-bios, grub-efi, defaults to syslinux on amd64 and grub-efi on arm64
+      --bootloader string          Bootloader to use: syslinux, grub, grub-bios, grub-efi, defaults to syslinux on amd64 and grub-efi on arm64 and riscv64
       --dns strings                DNS servers to set in the generated image
       --dns-search strings         DNS search domains to set in the generated image
       --force                      Override output qcow2 image
@@ -181,7 +181,7 @@ Flags:
       --network-manager string     Network manager to use for the image: none, netplan, ifupdown
   -o, --output string              The output image, the extension determine the image format, raw will be used if none. Supported formats: qcow2 qed raw vdi vhd vmdk (default "disk0.qcow2")
   -p, --password string            Optional root user password
-      --platform string            Platform to use for the container disk image, linux/arm64 and linux/arm64 are supported (default "linux/amd64")
+      --platform string            Platform to use for the container disk image, linux/amd64, linux/arm64 and linux/riscv64 are supported (default "linux/amd64")
       --pull                       Always pull docker image
       --push                       Push the container disk image to the registry
       --raw                        Just convert the container to virtual machine image without installing anything more
@@ -332,7 +332,7 @@ Flags:
       --add-host strings           Add a custom host-to-IP mapping (host:ip) to the /etc/hosts file in the generated image
       --boot-fs string             Filesystem to use for the boot partition, ext4 or fat32
       --boot-size uint             Size of the boot partition in MB (default 100)
-      --bootloader string          Bootloader to use: syslinux, grub, grub-bios, grub-efi, defaults to syslinux on amd64 and grub-efi on arm64
+      --bootloader string          Bootloader to use: syslinux, grub, grub-bios, grub-efi, defaults to syslinux on amd64 and grub-efi on arm64 and riscv64
       --dns strings                DNS servers to set in the generated image
       --dns-search strings         DNS search domains to set in the generated image
       --build-arg stringArray      Set build-time variables
@@ -345,7 +345,7 @@ Flags:
       --network-manager string     Network manager to use for the image: none, netplan, ifupdown
   -o, --output string              The output image, the extension determine the image format, raw will be used if none. Supported formats: qcow2 qed raw vdi vhd vmdk (default "disk0.qcow2")
   -p, --password string            Optional root user password
-      --platform string            Platform to use for the container disk image, linux/arm64 and linux/arm64 are supported (default "linux/amd64")
+      --platform string            Platform to use for the container disk image, linux/amd64, linux/arm64 and linux/riscv64 are supported (default "linux/amd64")
       --pull                       Always pull docker image
       --push                       Push the container disk image to the registry
       --raw                        Just convert the container to virtual machine image without installing anything more

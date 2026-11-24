@@ -2,7 +2,7 @@ FROM {{ .Image }} AS rootfs
 
 USER root
 
-RUN ARCH="$([ "$(uname -m)" = "x86_64" ] && echo amd64 || echo arm64)"; \
+RUN ARCH="$(dpkg --print-architecture)"; \
   apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
   linux-image-virtual \
