@@ -30,6 +30,12 @@ builds:
   goarch:
   - amd64
   - arm64
+  - riscv64
+  ignore:
+  - goos: windows
+    goarch: riscv64
+  - goos: darwin
+    goarch: riscv64
 checksum:
   name_template: 'checksums.txt'
 signs:
