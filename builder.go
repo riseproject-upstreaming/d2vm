@@ -97,8 +97,10 @@ func NewBuilder(ctx context.Context, workdir, imgTag, disk string, size uint64, 
 		arch = "x86_64"
 	case "linux/arm64", "linux/aarch64":
 		arch = "arm64"
+	case "linux/riscv64":
+		arch = "riscv64"
 	default:
-		return nil, fmt.Errorf("unexpected platform: %s, supported platforms: linux/amd64, linux/arm64", platform)
+		return nil, fmt.Errorf("unexpected platform: %s, supported platforms: linux/amd64, linux/arm64, linux/riscv64", platform)
 	}
 	if luksPassword != "" {
 		if !splitBoot {
